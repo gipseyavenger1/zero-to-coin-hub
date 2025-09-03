@@ -14,7 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      crypto_wallets: {
+        Row: {
+          created_at: string
+          crypto_name: string
+          crypto_symbol: string
+          id: string
+          is_active: boolean
+          network: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          crypto_name: string
+          crypto_symbol: string
+          id?: string
+          is_active?: boolean
+          network: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          crypto_name?: string
+          crypto_symbol?: string
+          id?: string
+          is_active?: boolean
+          network?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_balances: {
+        Row: {
+          ada_balance: number
+          bnb_balance: number
+          btc_balance: number
+          created_at: string
+          eth_balance: number
+          id: string
+          total_balance: number
+          updated_at: string
+          usdt_balance: number
+          user_id: string
+        }
+        Insert: {
+          ada_balance?: number
+          bnb_balance?: number
+          btc_balance?: number
+          created_at?: string
+          eth_balance?: number
+          id?: string
+          total_balance?: number
+          updated_at?: string
+          usdt_balance?: number
+          user_id: string
+        }
+        Update: {
+          ada_balance?: number
+          bnb_balance?: number
+          btc_balance?: number
+          created_at?: string
+          eth_balance?: number
+          id?: string
+          total_balance?: number
+          updated_at?: string
+          usdt_balance?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
