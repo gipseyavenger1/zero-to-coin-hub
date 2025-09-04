@@ -20,6 +20,9 @@ import type { User } from '@supabase/supabase-js';
 import SendCryptoModal from './SendCryptoModal';
 import AddCryptoModal from './AddCryptoModal';
 import CryptoChart from './CryptoChart';
+import RealTimePriceChart from './RealTimePriceChart';
+import CryptoNews from './CryptoNews';
+import PortfolioManager from './PortfolioManager';
 
 interface CryptoWallet {
   id: string;
@@ -120,10 +123,6 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
     }).format(amount);
   };
 
-  const handleAddCrypto = (amount: number) => {
-    // This is called from the chart when crypto is added
-    fetchData(); // Refresh the data
-  };
 
   if (loading) {
     return (
@@ -225,8 +224,17 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
           </Card>
         </div>
 
-        {/* Portfolio Chart */}
-        <CryptoChart onAddCrypto={handleAddCrypto} />
+        {/* Real-Time Price Charts */}
+        <RealTimePriceChart />
+
+        {/* Portfolio Performance Chart */}
+        <CryptoChart />
+
+        {/* Portfolio Management */}
+        <PortfolioManager user={user} />
+
+        {/* Crypto News */}
+        <CryptoNews />
 
         {/* Features Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

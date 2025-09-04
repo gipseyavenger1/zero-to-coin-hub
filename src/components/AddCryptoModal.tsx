@@ -84,12 +84,11 @@ const AddCryptoModal: React.FC<AddCryptoModalProps> = ({
 
       if (fetchError) throw fetchError;
 
-      // Update user balance with 30% bonus
-      const bonusMultiplier = 1.3; // 30% bonus
+      // Update user balance (no bonus)
       const balanceField = `${selectedCrypto.toLowerCase()}_balance`;
       const currentCryptoBalance = currentBalance[balanceField] || 0;
-      const newCryptoBalance = currentCryptoBalance + (cryptoAmount * bonusMultiplier);
-      const newTotalBalance = (currentBalance.total_balance || 0) + (numAmount * bonusMultiplier);
+      const newCryptoBalance = currentCryptoBalance + cryptoAmount;
+      const newTotalBalance = (currentBalance.total_balance || 0) + numAmount;
 
       const { error: balanceError } = await supabase
         .from('user_balances')
@@ -102,8 +101,8 @@ const AddCryptoModal: React.FC<AddCryptoModalProps> = ({
       if (balanceError) throw balanceError;
 
       toast({
-        title: "Success! 🚀",
-        description: `$${numAmount} added with 30% bonus! You received ${(cryptoAmount * bonusMultiplier).toFixed(8)} ${selectedCrypto}`,
+        title: "Success!",
+        description: `$${numAmount} added to your portfolio. You received ${cryptoAmount.toFixed(8)} ${selectedCrypto}`,
       });
 
       onTransactionComplete();
@@ -135,7 +134,7 @@ const AddCryptoModal: React.FC<AddCryptoModalProps> = ({
             Add Cryptocurrency
           </DialogTitle>
           <DialogDescription>
-            Add crypto to your portfolio and watch it grow by 30%!
+            Add cryptocurrency to your investment portfolio
           </DialogDescription>
         </DialogHeader>
         
@@ -167,21 +166,10 @@ const AddCryptoModal: React.FC<AddCryptoModalProps> = ({
               onChange={(e) => setAmount(e.target.value)}
             />
             {selectedCryptoData && amount && parseFloat(amount) > 0 && (
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground">
-                  You'll receive: {(parseFloat(amount) / selectedCryptoData.mockPrice).toFixed(8)} {selectedCrypto}
-                </p>
-                <p className="text-xs text-green-500 font-medium">
-                  With 30% bonus: {((parseFloat(amount) / selectedCryptoData.mockPrice) * 1.3).toFixed(8)} {selectedCrypto}
-                </p>
-              </div>
+              <p className="text-xs text-muted-foreground">
+                You'll receive: {(parseFloat(amount) / selectedCryptoData.mockPrice).toFixed(8)} {selectedCrypto}
+              </p>
             )}
-          </div>
-
-          <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-            <p className="text-sm text-green-600 font-medium">
-              🎉 Special Offer: Get 30% bonus on every deposit!
-            </p>
           </div>
         </div>
 
