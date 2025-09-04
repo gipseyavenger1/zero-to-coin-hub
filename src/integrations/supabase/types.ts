@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      crypto_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          crypto_symbol: string
+          from_address: string | null
+          id: string
+          status: string
+          to_address: string | null
+          transaction_hash: string | null
+          transaction_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          crypto_symbol: string
+          from_address?: string | null
+          id?: string
+          status?: string
+          to_address?: string | null
+          transaction_hash?: string | null
+          transaction_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          crypto_symbol?: string
+          from_address?: string | null
+          id?: string
+          status?: string
+          to_address?: string | null
+          transaction_hash?: string | null
+          transaction_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       crypto_wallets: {
         Row: {
           created_at: string

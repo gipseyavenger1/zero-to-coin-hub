@@ -12,9 +12,14 @@ import {
   DollarSign,
   Shield,
   Zap,
-  Coins
+  Coins,
+  Send,
+  Plus
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
+import SendCryptoModal from './SendCryptoModal';
+import AddCryptoModal from './AddCryptoModal';
+import CryptoChart from './CryptoChart';
 
 interface CryptoWallet {
   id: string;
@@ -50,6 +55,8 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
   const [wallets, setWallets] = useState<CryptoWallet[]>([]);
   const [balance, setBalance] = useState<UserBalance | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -113,6 +120,11 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
     }).format(amount);
   };
 
+  const handleAddCrypto = (amount: number) => {
+    // This is called from the chart when crypto is added
+    fetchData(); // Refresh the data
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -140,9 +152,27 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
                 </p>
               </div>
             </div>
-            <Button variant="outline" onClick={onSignOut}>
-              Sign Out
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="default"
+                onClick={() => setShowAddModal(true)}
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Crypto
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => setShowSendModal(true)}
+                className="flex items-center gap-2"
+              >
+                <Send className="h-4 w-4" />
+                Send
+              </Button>
+              <Button variant="outline" onClick={onSignOut}>
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -194,6 +224,9 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
             </CardContent>
           </Card>
         </div>
+
+        {/* Portfolio Chart */}
+        <CryptoChart onAddCrypto={handleAddCrypto} />
 
         {/* Features Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -317,6 +350,22 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
             </CardContent>
           </Card>
         </div>
+
+        {/* Modals */}
+        <SendCryptoModal
+          isOpen={showSendModal}
+          onClose={() => setShowSendModal(false)}
+          user={user}
+          userBalance={balance}
+          onTransactionComplete={fetchData}
+        />
+        
+        <AddCryptoModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          user={user}
+          onTransactionComplete={fetchData}
+        />
       </div>
     </div>
   );
