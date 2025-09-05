@@ -14,17 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      crypto_prices: {
+        Row: {
+          change_24h: number | null
+          id: string
+          last_updated: string
+          market_cap: number | null
+          price_usd: number
+          symbol: string
+          volume_24h: number | null
+        }
+        Insert: {
+          change_24h?: number | null
+          id?: string
+          last_updated?: string
+          market_cap?: number | null
+          price_usd: number
+          symbol: string
+          volume_24h?: number | null
+        }
+        Update: {
+          change_24h?: number | null
+          id?: string
+          last_updated?: string
+          market_cap?: number | null
+          price_usd?: number
+          symbol?: string
+          volume_24h?: number | null
+        }
+        Relationships: []
+      }
       crypto_transactions: {
         Row: {
           amount: number
           created_at: string
           crypto_symbol: string
+          exchange: string | null
+          fees: number | null
           from_address: string | null
           id: string
+          purchase_price: number | null
           status: string
           to_address: string | null
           transaction_hash: string | null
           transaction_type: string
+          transaction_value: number | null
           updated_at: string
           user_id: string
         }
@@ -32,12 +66,16 @@ export type Database = {
           amount: number
           created_at?: string
           crypto_symbol: string
+          exchange?: string | null
+          fees?: number | null
           from_address?: string | null
           id?: string
+          purchase_price?: number | null
           status?: string
           to_address?: string | null
           transaction_hash?: string | null
           transaction_type: string
+          transaction_value?: number | null
           updated_at?: string
           user_id: string
         }
@@ -45,12 +83,16 @@ export type Database = {
           amount?: number
           created_at?: string
           crypto_symbol?: string
+          exchange?: string | null
+          fees?: number | null
           from_address?: string | null
           id?: string
+          purchase_price?: number | null
           status?: string
           to_address?: string | null
           transaction_hash?: string | null
           transaction_type?: string
+          transaction_value?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -83,6 +125,33 @@ export type Database = {
           is_active?: boolean
           network?: string
           wallet_address?: string
+        }
+        Relationships: []
+      }
+      portfolio_snapshots: {
+        Row: {
+          created_at: string
+          id: string
+          total_cost: number
+          total_value: number
+          unrealized_pnl: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          total_cost: number
+          total_value: number
+          unrealized_pnl: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          total_cost?: number
+          total_value?: number
+          unrealized_pnl?: number
+          user_id?: string
         }
         Relationships: []
       }

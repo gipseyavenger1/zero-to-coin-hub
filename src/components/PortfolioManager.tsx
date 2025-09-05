@@ -4,40 +4,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   PieChart, 
   Pie, 
   Cell, 
   ResponsiveContainer,
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip
+  Tooltip,
+  Area,
+  AreaChart
 } from 'recharts';
 import { 
   PieChart as PieChartIcon, 
   Wallet, 
   TrendingUp, 
+  TrendingDown,
   DollarSign, 
   Target,
-  ArrowUpDown
+  BarChart3,
+  RefreshCw
 } from 'lucide-react';
+import { calculatePortfolioMetrics, formatCurrency, formatPercentage, formatCrypto } from '@/utils/portfolioCalculations';
+import TransactionForm from './TransactionForm';
+import WalletSync from './WalletSync';
 import type { User } from '@supabase/supabase-js';
 
 interface PortfolioManagerProps {
   user: User;
-}
-
-interface PortfolioData {
-  symbol: string;
-  name: string;
-  balance: number;
-  value: number;
-  allocation: number;
-  performance24h: number;
-  color: string;
 }
 
 interface Transaction {
@@ -45,90 +43,111 @@ interface Transaction {
   crypto_symbol: string;
   amount: number;
   transaction_type: string;
+  purchase_price: number;
+  fees: number;
+  transaction_value: number;
   created_at: string;
   status: string;
 }
 
-const PortfolioManager: React.FC<PortfolioManagerProps> = ({ user }) => {
-  const [portfolioData, setPortfolioData] = useState<PortfolioData[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [totalValue, setTotalValue] = useState(0);
-  const [loading, setLoading] = useState(true);
+interface PriceData {
+  symbol: string;
+  price_usd: number;
+  change_24h: number;
+  market_cap: number;
+  volume_24h: number;
+}
 
-  const cryptoColors = {
+const PortfolioManager: React.FC<PortfolioManagerProps> = ({ user }) => {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [priceData, setPriceData] = useState<PriceData[]>([]);
+  const [portfolioMetrics, setPortfolioMetrics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const cryptoColors: Record<string, string> = {
     BTC: '#f7931a',
     ETH: '#627eea',
     USDT: '#26a17b',
     BNB: '#f3ba2f',
-    ADA: '#0033ad'
+    ADA: '#0033ad',
+    SOL: '#9945ff',
+    XRP: '#23292f',
+    DOT: '#e6007a'
   };
 
-  const mockPrices = {
-    BTC: 45000,
-    ETH: 3000,
-    USDT: 1,
-    BNB: 300,
-    ADA: 0.5
+  const fetchRealTimePrices = async (symbols: string[]) => {
+    try {
+      const response = await fetch('/api/coinmarketcap-api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          endpoint: 'quotes',
+          symbols: symbols.join(',')
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch prices');
+      
+      const data = await response.json();
+      const prices: PriceData[] = [];
+      
+      if (data.data) {
+        Object.entries(data.data).forEach(([symbol, coinData]: [string, any]) => {
+          const quote = coinData.quote.USD;
+          prices.push({
+            symbol,
+            price_usd: quote.price,
+            change_24h: quote.percent_change_24h,
+            market_cap: quote.market_cap,
+            volume_24h: quote.volume_24h
+          });
+        });
+      }
+      
+      setPriceData(prices);
+    } catch (error) {
+      console.error('Error fetching real-time prices:', error);
+      // Fallback to cached prices from database
+      const { data: cachedPrices } = await supabase
+        .from('crypto_prices')
+        .select('*');
+      
+      if (cachedPrices) {
+        const formattedPrices = cachedPrices.map(price => ({
+          symbol: price.symbol,
+          price_usd: parseFloat(price.price_usd.toString()),
+          change_24h: parseFloat(price.change_24h?.toString() || '0'),
+          market_cap: parseFloat(price.market_cap?.toString() || '0'),
+          volume_24h: parseFloat(price.volume_24h?.toString() || '0')
+        }));
+        setPriceData(formattedPrices);
+      }
+    }
   };
 
   const fetchPortfolioData = async () => {
     try {
       setLoading(true);
-      
-      // Fetch user balance
-      const { data: balanceData, error: balanceError } = await supabase
-        .from('user_balances')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
 
-      if (balanceError) throw balanceError;
-
-      // Fetch recent transactions
+      // Fetch all transactions
       const { data: transactionData, error: transactionError } = await supabase
         .from('crypto_transactions')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
+        .order('created_at', { ascending: false });
 
       if (transactionError) throw transactionError;
 
-      // Calculate portfolio data
-      const cryptos = [
-        { symbol: 'BTC', name: 'Bitcoin', balance: balanceData.btc_balance },
-        { symbol: 'ETH', name: 'Ethereum', balance: balanceData.eth_balance },
-        { symbol: 'USDT', name: 'Tether', balance: balanceData.usdt_balance },
-        { symbol: 'BNB', name: 'BNB', balance: balanceData.bnb_balance },
-        { symbol: 'ADA', name: 'Cardano', balance: balanceData.ada_balance }
-      ];
-
-      let total = 0;
-      const portfolio = cryptos.map((crypto) => {
-        const price = mockPrices[crypto.symbol as keyof typeof mockPrices];
-        const value = crypto.balance * price;
-        total += value;
-        
-        return {
-          symbol: crypto.symbol,
-          name: crypto.name,
-          balance: crypto.balance,
-          value,
-          allocation: 0, // Will calculate after total
-          performance24h: (Math.random() - 0.5) * 10, // Mock 24h performance
-          color: cryptoColors[crypto.symbol as keyof typeof cryptoColors]
-        };
-      }).filter(crypto => crypto.balance > 0);
-
-      // Calculate allocations
-      const portfolioWithAllocations = portfolio.map(crypto => ({
-        ...crypto,
-        allocation: total > 0 ? (crypto.value / total) * 100 : 0
-      }));
-
-      setPortfolioData(portfolioWithAllocations);
-      setTotalValue(total);
       setTransactions(transactionData || []);
+
+      // Get unique symbols from transactions
+      const symbols = Array.from(new Set(transactionData?.map(tx => tx.crypto_symbol) || []));
+      
+      if (symbols.length > 0) {
+        await fetchRealTimePrices(symbols);
+      }
+
     } catch (error) {
       console.error('Error fetching portfolio data:', error);
     } finally {
@@ -136,35 +155,35 @@ const PortfolioManager: React.FC<PortfolioManagerProps> = ({ user }) => {
     }
   };
 
+  const refreshPrices = async () => {
+    setRefreshing(true);
+    const symbols = Array.from(new Set(transactions.map(tx => tx.crypto_symbol)));
+    if (symbols.length > 0) {
+      await fetchRealTimePrices(symbols);
+    }
+    setRefreshing(false);
+  };
+
   useEffect(() => {
     fetchPortfolioData();
   }, [user.id]);
 
-  const rebalanceRecommendations = portfolioData.map(crypto => {
-    const targetAllocation = 20; // Equal weight target
-    const currentAllocation = crypto.allocation;
-    const difference = targetAllocation - currentAllocation;
+  useEffect(() => {
+    if (transactions.length > 0 && priceData.length > 0) {
+      const metrics = calculatePortfolioMetrics(transactions, priceData);
+      setPortfolioMetrics(metrics);
+    }
+  }, [transactions, priceData]);
+
+  const getPortfolioAllocationData = () => {
+    if (!portfolioMetrics) return [];
     
-    return {
-      symbol: crypto.symbol,
-      current: currentAllocation,
-      target: targetAllocation,
-      difference,
-      action: difference > 5 ? 'BUY' : difference < -5 ? 'SELL' : 'HOLD'
-    };
-  });
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
-  };
-
-  const formatCrypto = (amount: number, symbol: string) => {
-    return `${amount.toFixed(8)} ${symbol}`;
+    return portfolioMetrics.positions.map((position: any) => ({
+      symbol: position.symbol,
+      value: position.currentValue,
+      allocation: (position.currentValue / portfolioMetrics.totalValue) * 100,
+      color: cryptoColors[position.symbol] || '#8884d8'
+    }));
   };
 
   if (loading) {
@@ -182,150 +201,229 @@ const PortfolioManager: React.FC<PortfolioManagerProps> = ({ user }) => {
     );
   }
 
+  const allocationData = getPortfolioAllocationData();
+
   return (
     <div className="space-y-6">
       {/* Portfolio Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <DollarSign className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium">Total Value</span>
             </div>
-            <p className="text-2xl font-bold">{formatCurrency(totalValue)}</p>
+            <p className="text-2xl font-bold">
+              {formatCurrency(portfolioMetrics?.totalValue || 0)}
+            </p>
           </CardContent>
         </Card>
         
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="h-4 w-4 text-green-500" />
-              <span className="text-sm font-medium">24h Change</span>
+              {portfolioMetrics?.totalPnL >= 0 ? (
+                <TrendingUp className="h-4 w-4 text-green-500" />
+              ) : (
+                <TrendingDown className="h-4 w-4 text-red-500" />
+              )}
+              <span className="text-sm font-medium">Total P&L</span>
             </div>
-            <p className="text-2xl font-bold text-green-500">+5.24%</p>
+            <p className={`text-2xl font-bold ${
+              portfolioMetrics?.totalPnL >= 0 ? 'text-green-500' : 'text-red-500'
+            }`}>
+              {formatPercentage(portfolioMetrics?.totalPnLPercent || 0)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <BarChart3 className="h-4 w-4 text-blue-500" />
+              <span className="text-sm font-medium">Unrealized P&L</span>
+            </div>
+            <p className={`text-2xl font-bold ${
+              portfolioMetrics?.totalUnrealizedPnL >= 0 ? 'text-green-500' : 'text-red-500'
+            }`}>
+              {formatCurrency(portfolioMetrics?.totalUnrealizedPnL || 0)}
+            </p>
           </CardContent>
         </Card>
         
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Wallet className="h-4 w-4 text-blue-500" />
-              <span className="text-sm font-medium">Assets</span>
+              <Wallet className="h-4 w-4 text-purple-500" />
+              <span className="text-sm font-medium">Realized P&L</span>
             </div>
-            <p className="text-2xl font-bold">{portfolioData.length}</p>
+            <p className={`text-2xl font-bold ${
+              portfolioMetrics?.totalRealizedPnL >= 0 ? 'text-green-500' : 'text-red-500'
+            }`}>
+              {formatCurrency(portfolioMetrics?.totalRealizedPnL || 0)}
+            </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Target className="h-4 w-4 text-purple-500" />
-              <span className="text-sm font-medium">Diversification</span>
+              <RefreshCw className="h-4 w-4 text-orange-500" />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={refreshPrices}
+                disabled={refreshing}
+                className="h-auto p-0 text-sm font-medium"
+              >
+                {refreshing ? 'Updating...' : 'Refresh Prices'}
+              </Button>
             </div>
-            <p className="text-2xl font-bold">Good</p>
+            <p className="text-2xl font-bold">
+              {portfolioMetrics?.positions.length || 0} Assets
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Portfolio Allocation Pie Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <PieChartIcon className="h-5 w-5 text-primary" />
-              Portfolio Allocation
-            </CardTitle>
-            <CardDescription>
-              Distribution of your crypto holdings
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 mb-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={portfolioData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={(entry) => `${entry.symbol} ${entry.allocation.toFixed(1)}%`}
-                  >
-                    {portfolioData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value: number) => [formatCurrency(value), "Value"]} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            
-            <div className="space-y-2">
-              {portfolioData.map((crypto) => (
-                <div key={crypto.symbol} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: crypto.color }}
-                    ></div>
-                    <span className="text-sm font-medium">{crypto.name}</span>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">{crypto.allocation.toFixed(1)}%</p>
-                    <p className="text-xs text-muted-foreground">{formatCurrency(crypto.value)}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="transactions">Add Transaction</TabsTrigger>
+          <TabsTrigger value="sync">Wallet Sync</TabsTrigger>
+        </TabsList>
 
-        {/* Rebalancing Recommendations */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ArrowUpDown className="h-5 w-5 text-primary" />
-              Rebalancing Recommendations
-            </CardTitle>
-            <CardDescription>
-              Suggested actions to optimize your portfolio
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {rebalanceRecommendations.map((rec) => (
-                <div key={rec.symbol} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{rec.symbol}</span>
-                    <Badge 
-                      variant={rec.action === 'BUY' ? 'default' : rec.action === 'SELL' ? 'destructive' : 'secondary'}
-                    >
-                      {rec.action}
-                    </Badge>
+        <TabsContent value="overview" className="space-y-6">
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Portfolio Allocation */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PieChartIcon className="h-5 w-5 text-primary" />
+                Portfolio Allocation
+              </CardTitle>
+              <CardDescription>
+                Distribution of your crypto holdings by value
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {allocationData.length > 0 ? (
+                <>
+                  <div className="h-64 mb-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={allocationData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={(entry) => `${entry.symbol} ${entry.allocation.toFixed(1)}%`}
+                        >
+                          {allocationData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value: number) => [formatCurrency(value), "Value"]} />
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
                   
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>Current: {rec.current.toFixed(1)}%</span>
-                      <span>Target: {rec.target}%</span>
-                    </div>
-                    <Progress value={rec.current} className="h-2" />
+                  <div className="space-y-2">
+                    {allocationData.map((crypto) => (
+                      <div key={crypto.symbol} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: crypto.color }}
+                          ></div>
+                          <span className="text-sm font-medium">{crypto.symbol}</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">{crypto.allocation.toFixed(1)}%</p>
+                          <p className="text-xs text-muted-foreground">{formatCurrency(crypto.value)}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  
-                  <p className="text-xs text-muted-foreground">
-                    {rec.difference > 0 
-                      ? `Consider buying ${Math.abs(rec.difference).toFixed(1)}% more`
-                      : rec.difference < 0
-                      ? `Consider selling ${Math.abs(rec.difference).toFixed(1)}%`
-                      : 'Well balanced'
-                    }
-                  </p>
+                </>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <PieChartIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No portfolio data available</p>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Portfolio Performance */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                Position Details
+              </CardTitle>
+              <CardDescription>
+                Individual crypto performance and metrics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {portfolioMetrics?.positions.map((position: any) => (
+                  <div key={position.symbol} className="p-4 border rounded-lg space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-4 h-4 rounded-full" 
+                          style={{ backgroundColor: cryptoColors[position.symbol] || '#8884d8' }}
+                        ></div>
+                        <span className="font-semibold">{position.symbol}</span>
+                      </div>
+                      <Badge variant={position.unrealizedPnL >= 0 ? "default" : "destructive"}>
+                        {formatPercentage(position.unrealizedPnLPercent)}
+                      </Badge>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="text-muted-foreground">Holdings</p>
+                        <p className="font-medium">{formatCrypto(position.totalAmount, position.symbol)}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Current Value</p>
+                        <p className="font-medium">{formatCurrency(position.currentValue)}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Avg Cost</p>
+                        <p className="font-medium">{formatCurrency(position.averagePrice)}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Current Price</p>
+                        <p className="font-medium">{formatCurrency(position.currentPrice)}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center pt-2 border-t">
+                      <span className="text-sm text-muted-foreground">Unrealized P&L</span>
+                      <span className={`font-semibold ${
+                        position.unrealizedPnL >= 0 ? 'text-green-500' : 'text-red-500'
+                      }`}>
+                        {formatCurrency(position.unrealizedPnL)}
+                      </span>
+                    </div>
+                  </div>
+                )) || (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Wallet className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No positions found</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Recent Transactions */}
         <Card className="lg:col-span-2">
@@ -336,11 +434,17 @@ const PortfolioManager: React.FC<PortfolioManagerProps> = ({ user }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {transactions.map((transaction) => (
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {transactions.slice(0, 10).map((transaction) => (
                 <div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
-                    <Badge variant={transaction.transaction_type === 'deposit' ? 'default' : 'destructive'}>
+                    <Badge 
+                      variant={
+                        transaction.transaction_type === 'buy' || transaction.transaction_type === 'deposit' 
+                          ? 'default' 
+                          : 'destructive'
+                      }
+                    >
                       {transaction.transaction_type}
                     </Badge>
                     <div>
@@ -352,12 +456,11 @@ const PortfolioManager: React.FC<PortfolioManagerProps> = ({ user }) => {
                   </div>
                   <div className="text-right">
                     <p className="font-medium">
-                      {transaction.transaction_type === 'deposit' ? '+' : '-'}
                       {formatCrypto(transaction.amount, transaction.crypto_symbol)}
                     </p>
-                    <Badge variant="outline" className="text-xs">
-                      {transaction.status}
-                    </Badge>
+                    <p className="text-xs text-muted-foreground">
+                      @ {formatCurrency(transaction.purchase_price)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -371,7 +474,18 @@ const PortfolioManager: React.FC<PortfolioManagerProps> = ({ user }) => {
             </div>
           </CardContent>
         </Card>
-      </div>
+
+        </TabsContent>
+
+        <TabsContent value="transactions">
+          <TransactionForm user={user} onTransactionAdded={fetchPortfolioData} />
+        </TabsContent>
+
+        <TabsContent value="sync">
+          <WalletSync onSyncComplete={fetchPortfolioData} />
+        </TabsContent>
+
+      </Tabs>
     </div>
   );
 };
