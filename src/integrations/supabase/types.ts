@@ -128,6 +128,39 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_value_updates: {
+        Row: {
+          created_at: string
+          crypto_symbol: string
+          id: string
+          increase_percentage: number
+          new_value: number
+          previous_value: number
+          update_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          crypto_symbol: string
+          id?: string
+          increase_percentage?: number
+          new_value: number
+          previous_value: number
+          update_date?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          crypto_symbol?: string
+          id?: string
+          increase_percentage?: number
+          new_value?: number
+          previous_value?: number
+          update_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       portfolio_snapshots: {
         Row: {
           created_at: string
@@ -214,6 +247,36 @@ export type Database = {
           total_balance?: number
           updated_at?: string
           usdt_balance?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          created_at: string
+          encrypted_data: string | null
+          id: string
+          notification_preferences: Json | null
+          privacy_settings: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_data?: string | null
+          id?: string
+          notification_preferences?: Json | null
+          privacy_settings?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_data?: string | null
+          id?: string
+          notification_preferences?: Json | null
+          privacy_settings?: Json | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
