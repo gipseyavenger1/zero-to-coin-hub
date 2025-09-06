@@ -95,17 +95,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ user, onTransactionAd
 
       if (error) throw error;
 
-      // Update user balance
+      // Update user balance  
       const balanceChange = formData.transaction_type === 'buy' 
         ? parseFloat(formData.amount) 
         : -parseFloat(formData.amount);
-
-      const columnName = `${formData.crypto_symbol.toLowerCase()}_balance`;
       
       const { error: balanceError } = await supabase.rpc('update_balance', {
-        user_id: user.id,
-        crypto_symbol: formData.crypto_symbol,
-        amount_change: balanceChange
+        user_id_param: user.id,
+        crypto_symbol_param: formData.crypto_symbol,
+        amount_change_param: balanceChange
       });
 
       if (balanceError) {
