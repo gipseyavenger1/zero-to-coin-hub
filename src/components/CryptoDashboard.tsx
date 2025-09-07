@@ -21,7 +21,7 @@ import SendCryptoModal from './SendCryptoModal';
 import AddCryptoModal from './AddCryptoModal';
 import CryptoChart from './CryptoChart';
 import RealTimePriceChart from './RealTimePriceChart';
-import CryptoNews from './CryptoNews';
+
 import PortfolioManager from './PortfolioManager';
 
 interface CryptoWallet {
@@ -233,8 +233,6 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
         {/* Portfolio Management */}
         <PortfolioManager user={user} />
 
-        {/* Crypto News */}
-        <CryptoNews />
 
         {/* Features Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

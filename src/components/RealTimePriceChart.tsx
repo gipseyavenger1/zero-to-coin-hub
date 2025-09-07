@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
-import axios from 'axios';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PriceData {
   time: string;
@@ -59,36 +59,86 @@ const RealTimePriceChart: React.FC = () => {
     try {
       setLoading(true);
       
-      // Mock data for demonstration (in real app, use CoinGecko API)
-      const mockData = cryptoOptions.map((crypto) => {
-        const basePrices = {
-          bitcoin: 45000,
-          ethereum: 3000,
-          tether: 1,
-          binancecoin: 300,
-          cardano: 0.5
-        };
-        
-        const basePrice = basePrices[crypto.id as keyof typeof basePrices];
-        const changePercent = (Math.random() - 0.5) * 10; // ±5% change
-        const change24h = basePrice * (changePercent / 100);
-        
-        return {
-          symbol: crypto.symbol,
-          name: crypto.name,
-          price: basePrice + change24h,
-          change24h,
-          changePercent24h: changePercent,
-          volume24h: Math.random() * 1000000000,
-          marketCap: (basePrice + change24h) * 21000000,
-          data: generateMockPriceData(basePrice)
-        };
-      });
+      // Get real-time prices from CoinMarketCap via our edge function
+      const symbols = cryptoOptions.map(c => c.symbol).join(',');
       
-      setCryptoData(mockData);
+      const { data: response, error } = await supabase.functions.invoke('coinmarketcap-api', {
+        body: { 
+          endpoint: 'quotes',
+          symbols: symbols
+        }
+      });
+
+      if (error) {
+        console.error('CoinMarketCap API error:', error);
+        // Fallback to cached data from database
+        const { data: cachedPrices } = await supabase
+          .from('crypto_prices')
+          .select('*')
+          .in('symbol', cryptoOptions.map(c => c.symbol));
+        
+        if (cachedPrices && cachedPrices.length > 0) {
+          const cryptoData = cachedPrices.map(price => {
+            const option = cryptoOptions.find(opt => opt.symbol === price.symbol);
+            return {
+              symbol: price.symbol,
+              name: option?.name || price.symbol,
+              price: Number(price.price_usd),
+              change24h: Number(price.change_24h || 0),
+              changePercent24h: Number(price.change_24h || 0),
+              volume24h: Number(price.volume_24h || 0),
+              marketCap: Number(price.market_cap || 0),
+              data: generateMockPriceData(Number(price.price_usd))
+            };
+          });
+          setCryptoData(cryptoData);
+        }
+      } else if (response?.data) {
+        // Process live CoinMarketCap data
+        const cryptoData = Object.entries(response.data).map(([symbol, coinData]: [string, any]) => {
+          const option = cryptoOptions.find(opt => opt.symbol === symbol);
+          const quote = coinData.quote.USD;
+          
+          return {
+            symbol: symbol,
+            name: option?.name || coinData.name,
+            price: quote.price,
+            change24h: quote.percent_change_24h,
+            changePercent24h: quote.percent_change_24h,
+            volume24h: quote.volume_24h,
+            marketCap: quote.market_cap,
+            data: generateMockPriceData(quote.price)
+          };
+        });
+        
+        setCryptoData(cryptoData);
+      }
+      
       setLastUpdate(new Date());
     } catch (error) {
       console.error('Failed to fetch crypto data:', error);
+      // Try to load cached data as fallback
+      const { data: cachedPrices } = await supabase
+        .from('crypto_prices')
+        .select('*')
+        .in('symbol', cryptoOptions.map(c => c.symbol));
+      
+      if (cachedPrices && cachedPrices.length > 0) {
+        const cryptoData = cachedPrices.map(price => {
+          const option = cryptoOptions.find(opt => opt.symbol === price.symbol);
+          return {
+            symbol: price.symbol,
+            name: option?.name || price.symbol,
+            price: Number(price.price_usd),
+            change24h: Number(price.change_24h || 0),
+            changePercent24h: Number(price.change_24h || 0),
+            volume24h: Number(price.volume_24h || 0),
+            marketCap: Number(price.market_cap || 0),
+            data: generateMockPriceData(Number(price.price_usd))
+          };
+        });
+        setCryptoData(cryptoData);
+      }
     } finally {
       setLoading(false);
     }
@@ -96,7 +146,7 @@ const RealTimePriceChart: React.FC = () => {
 
   useEffect(() => {
     fetchCryptoData();
-    const interval = setInterval(fetchCryptoData, 30000); // Update every 30 seconds
+    const interval = setInterval(fetchCryptoData, 1000); // Update every 1 second
     return () => clearInterval(interval);
   }, []);
 
