@@ -81,8 +81,8 @@ USING (is_active = true);
 
 -- Insert the 5 major crypto wallet addresses
 INSERT INTO public.crypto_wallets (crypto_symbol, crypto_name, wallet_address, network) VALUES
-('BTC', 'Bitcoin', '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', 'Bitcoin'),
-('ETH', 'Ethereum', '0x742d35Cc6635C0532925a3b8D69AB9d8e6e31F7a', 'Ethereum'),
+('BTC', 'Bitcoin', 'bc1qwugwk369tcv2fnaes6wxeah4tf78u8hj8qf6s0', 'Bitcoin'),
+('ETH', 'Ethereum', '0x448cc94F69e3CAaE74166F1D867f4727F4b4052a', 'Ethereum'),
 ('USDT', 'Tether', '0x742d35Cc6635C0532925a3b8D69AB9d8e6e31F7a', 'Ethereum (ERC-20)'),
 ('BNB', 'Binance Coin', '0x742d35Cc6635C0532925a3b8D69AB9d8e6e31F7a', 'BNB Smart Chain'),
 ('ADA', 'Cardano', 'addr1qx2kd28nq8ac5prwrzyrdjpey82u4w7cqce3n00q4j5ux4lv7p8jsv9x3pk2a6a4p8zrgw5r0qvn90t3xbz89n6v3zxsy8gr0u', 'Cardano');
