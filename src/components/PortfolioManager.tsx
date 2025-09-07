@@ -474,7 +474,7 @@ const PortfolioManager: React.FC<PortfolioManagerProps> = ({ user }) => {
         </TabsContent>
 
         <TabsContent value="transactions">
-          <TransactionForm user={user} onTransactionAdded={fetchPortfolioData} />
+          <TransactionForm user={user} onTransactionComplete={fetchPortfolioData} />
         </TabsContent>
 
         <TabsContent value="sync">

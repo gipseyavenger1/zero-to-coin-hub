@@ -22,7 +22,7 @@ import AddCryptoModal from './AddCryptoModal';
 import CryptoChart from './CryptoChart';
 import RealTimePriceChart from './RealTimePriceChart';
 
-import PortfolioManager from './PortfolioManager';
+import RealTimePortfolioTracker from './RealTimePortfolioTracker';
 
 interface CryptoWallet {
   id: string;
@@ -224,14 +224,8 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
           </Card>
         </div>
 
-        {/* Real-Time Price Charts */}
-        <RealTimePriceChart />
-
-        {/* Portfolio Performance Chart */}
-        <CryptoChart />
-
-        {/* Portfolio Management */}
-        <PortfolioManager user={user} />
+        {/* Real-Time Portfolio Tracker */}
+        <RealTimePortfolioTracker user={user} />
 
 
         {/* Features Overview */}

@@ -10,8 +10,10 @@ const corsHeaders = {
 const coinmarketcapApiKey = Deno.env.get('COINMARKETCAP_API_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
 const supabase = createClient(supabaseUrl!, supabaseKey!);
+const supabaseService = createClient(supabaseUrl!, supabaseServiceKey!);
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -96,16 +98,16 @@ serve(async (req) => {
         });
       }
 
-      // Upsert price data
+      // Upsert price data using service role for RLS bypass
       if (priceUpdates.length > 0) {
-        const { error: upsertError } = await supabase
+        const { error: upsertError } = await supabaseService
           .from('crypto_prices')
           .upsert(priceUpdates, { onConflict: 'symbol' });
 
         if (upsertError) {
           console.error('Error caching price data:', upsertError);
         } else {
-          console.log(`Cached prices for ${priceUpdates.length} symbols`);
+          console.log(`Successfully cached prices for ${priceUpdates.length} symbols`);
         }
       }
     }

@@ -13,9 +13,11 @@ import type { User } from '@supabase/supabase-js';
 interface TransactionFormProps {
   user: User;
   onTransactionAdded?: () => void;
+  onTransactionComplete?: () => void;
+  onCancel?: () => void;
 }
 
-const TransactionForm: React.FC<TransactionFormProps> = ({ user, onTransactionAdded }) => {
+const TransactionForm: React.FC<TransactionFormProps> = ({ user, onTransactionAdded, onTransactionComplete, onCancel }) => {
   const [formData, setFormData] = useState({
     crypto_symbol: '',
     transaction_type: 'buy',
@@ -125,6 +127,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ user, onTransactionAd
       });
 
       onTransactionAdded?.();
+      onTransactionComplete?.();
       
     } catch (error: any) {
       console.error('Error recording transaction:', error);
@@ -277,9 +280,16 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ user, onTransactionAd
             </span>
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? 'Recording Transaction...' : 'Record Transaction'}
-          </Button>
+          <div className="flex gap-2">
+            {onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
+                Cancel
+              </Button>
+            )}
+            <Button type="submit" disabled={loading} className="flex-1">
+              {loading ? 'Recording Transaction...' : 'Record Transaction'}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
