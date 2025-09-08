@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import CryptoDashboard from '@/components/CryptoDashboard';
+import ContactSection from '@/components/ContactSection';
 import { Bitcoin, TrendingUp, Wallet, Shield, Zap, ArrowRight } from 'lucide-react';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -169,6 +170,9 @@ const Index = () => {
           ))}
         </div>
       </div>
+
+      {/* Contact & Credibility Section */}
+      <ContactSection />
 
       {/* CTA Section */}
       <div className="container mx-auto px-4 py-20">
