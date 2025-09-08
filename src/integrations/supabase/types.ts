@@ -286,6 +286,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_portfolio_snapshots: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       update_balance: {
         Args: {
           amount_change_param: number
