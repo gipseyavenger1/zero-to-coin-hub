@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import CryptoDashboard from '@/components/CryptoDashboard';
 import ContactSection from '@/components/ContactSection';
+import InvestmentPlans from '@/components/InvestmentPlans';
 import { Bitcoin, TrendingUp, Wallet, Shield, Zap, ArrowRight } from 'lucide-react';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -170,6 +171,9 @@ const Index = () => {
           ))}
         </div>
       </div>
+
+      {/* Investment Plans Section */}
+      <InvestmentPlans />
 
       {/* Contact & Credibility Section */}
       <ContactSection />
