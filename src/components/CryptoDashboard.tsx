@@ -13,12 +13,10 @@ import {
   Shield,
   Zap,
   Coins,
-  Send,
-  Plus
+  Send
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 import SendCryptoModal from './SendCryptoModal';
-import AddCryptoModal from './AddCryptoModal';
 import CryptoChart from './CryptoChart';
 import RealTimePriceChart from './RealTimePriceChart';
 
@@ -59,7 +57,6 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
   const [balance, setBalance] = useState<UserBalance | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSendModal, setShowSendModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -152,14 +149,6 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Button 
-                variant="default"
-                onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add Crypto
-              </Button>
               <Button 
                 variant="outline"
                 onClick={() => setShowSendModal(true)}
@@ -357,13 +346,6 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
           onClose={() => setShowSendModal(false)}
           user={user}
           userBalance={balance}
-          onTransactionComplete={fetchData}
-        />
-        
-        <AddCryptoModal
-          isOpen={showAddModal}
-          onClose={() => setShowAddModal(false)}
-          user={user}
           onTransactionComplete={fetchData}
         />
       </div>
