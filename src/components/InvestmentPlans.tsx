@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -44,11 +45,6 @@ const plans: Plan[] = [
 ];
 
 const InvestmentPlans = () => {
-  const handleSelectPlan = (amount: number) => {
-    console.log(`Selected plan: $${amount}`);
-    // TODO: Implement plan selection logic
-  };
-
   return (
     <div className="container mx-auto px-4 py-20">
       {/* Plans Grid Section */}
@@ -96,13 +92,14 @@ const InvestmentPlans = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button 
-                className="w-full" 
-                variant={index === 1 ? 'default' : 'outline'}
-                onClick={() => handleSelectPlan(plan.amount)}
-              >
-                Select Plan
-              </Button>
+              <Link to="/subscriptions" className="w-full">
+                <Button 
+                  className="w-full" 
+                  variant={index === 1 ? 'default' : 'outline'}
+                >
+                  Select Plan
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
         ))}
@@ -147,12 +144,11 @@ const InvestmentPlans = () => {
                   <span className="text-primary font-semibold">{plan.profitPercentage}%</span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button 
-                    size="sm" 
-                    onClick={() => handleSelectPlan(plan.amount)}
-                  >
-                    Activate
-                  </Button>
+                  <Link to="/subscriptions">
+                    <Button size="sm">
+                      Activate
+                    </Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

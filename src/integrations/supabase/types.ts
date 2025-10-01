@@ -281,6 +281,51 @@ export type Database = {
         }
         Relationships: []
       }
+      user_subscriptions: {
+        Row: {
+          created_at: string
+          end_date: string | null
+          id: string
+          investment_amount: number
+          payment_address: string | null
+          payment_tx_hash: string | null
+          plan_type: string
+          projected_profit: number
+          start_date: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          investment_amount: number
+          payment_address?: string | null
+          payment_tx_hash?: string | null
+          plan_type: string
+          projected_profit: number
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          investment_amount?: number
+          payment_address?: string | null
+          payment_tx_hash?: string | null
+          plan_type?: string
+          projected_profit?: number
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

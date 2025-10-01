@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import CryptoDashboard from '@/components/CryptoDashboard';
 import ContactSection from '@/components/ContactSection';
 import InvestmentPlans from '@/components/InvestmentPlans';
+import ActiveSubscription from '@/components/ActiveSubscription';
 import { Bitcoin, TrendingUp, Wallet, Shield, Zap, ArrowRight } from 'lucide-react';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -50,7 +51,14 @@ const Index = () => {
   }
 
   if (user) {
-    return <CryptoDashboard user={user} onSignOut={handleSignOut} />;
+    return (
+      <div>
+        <CryptoDashboard user={user} onSignOut={handleSignOut} />
+        <div className="container mx-auto px-4 pb-20">
+          <ActiveSubscription />
+        </div>
+      </div>
+    );
   }
 
   return (
