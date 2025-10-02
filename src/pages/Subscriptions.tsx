@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, TrendingUp } from "lucide-react";
+import { Check, TrendingUp, Copy, Bitcoin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import BitcoinPaymentModal from "@/components/BitcoinPaymentModal";
@@ -176,10 +176,82 @@ export default function Subscriptions() {
           ))}
         </div>
 
-        <div className="mt-16 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-card border border-border shadow-md">
-            <Check className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium">Secure Bitcoin payments • Automated blockchain verification • SSL/HTTPS encrypted</span>
+        <div className="mt-16 space-y-8">
+          {/* Bitcoin Payment Address Section */}
+          <div className="max-w-4xl mx-auto">
+            <div className="relative overflow-hidden rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-card via-card to-primary/5 shadow-2xl">
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[hsl(var(--bitcoin-gold))] via-primary to-accent" />
+              
+              <div className="p-8 md:p-12 space-y-6">
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[hsl(var(--bitcoin-gold))] to-[hsl(35_91%_65%)] shadow-lg mb-2">
+                    <Bitcoin className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    Official Bitcoin Payment Address
+                  </h3>
+                  <p className="text-muted-foreground text-base">
+                    Send your subscription payment to this verified address
+                  </p>
+                </div>
+
+                <div className="relative overflow-hidden rounded-xl border border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 p-6 md:p-8 shadow-inner">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -mr-16 -mt-16" />
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/10 rounded-full -ml-12 -mb-12" />
+                  
+                  <div className="relative space-y-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <code className="flex-1 text-lg md:text-xl font-mono font-bold break-all text-foreground bg-background/50 px-4 py-3 rounded-lg border border-border">
+                        1D5eHx9YTgqSNkdCWfqN3s7Ei7nQA8Wc39
+                      </code>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        onClick={() => {
+                          navigator.clipboard.writeText("1D5eHx9YTgqSNkdCWfqN3s7Ei7nQA8Wc39");
+                          toast({
+                            title: "Copied!",
+                            description: "Bitcoin address copied to clipboard",
+                          });
+                        }}
+                        className="flex-shrink-0 border-primary/30 hover:bg-primary/10 h-12 px-6"
+                      >
+                        <Copy className="h-5 w-5 mr-2" />
+                        Copy
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-4 border-t border-primary/20">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-muted-foreground">Secure & Verified</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-muted-foreground">Blockchain Monitored</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-muted-foreground">SSL/HTTPS Protected</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center pt-2">
+                  <p className="text-sm text-muted-foreground">
+                    💡 Select a plan above, send payment to this address, then submit your transaction hash
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-card border border-border shadow-md">
+              <Check className="h-5 w-5 text-primary" />
+              <span className="text-sm font-medium">Automated blockchain verification • Instant activation</span>
+            </div>
           </div>
         </div>
       </div>

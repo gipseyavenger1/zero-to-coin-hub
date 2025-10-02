@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Copy, CheckCircle2, Bitcoin } from "lucide-react";
+import { Copy, CheckCircle2, Bitcoin, Check } from "lucide-react";
 
 interface BitcoinPaymentModalProps {
   open: boolean;
@@ -128,35 +128,54 @@ export default function BitcoinPaymentModal({
               <Label className="text-base font-semibold">Send Payment to Address</Label>
             </div>
             
-            <div className="relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-6 shadow-lg">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16" />
-              <div className="relative space-y-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <code className="text-sm font-mono break-all leading-relaxed text-foreground font-semibold">
-                      {BITCOIN_ADDRESS}
-                    </code>
+            <div className="relative overflow-hidden rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 p-8 shadow-2xl">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -mr-16 -mt-16" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/10 rounded-full -ml-12 -mb-12" />
+              
+              <div className="relative space-y-5">
+                <div className="text-center mb-4">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-3">
+                    <Bitcoin className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-bold text-primary">OFFICIAL PAYMENT ADDRESS</span>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={copyToClipboard}
-                    className="flex-shrink-0 border-primary/30 hover:bg-primary/10 transition-all duration-300"
-                  >
-                    {copied ? (
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
                 </div>
-                <div className="flex items-center gap-2 pt-2 border-t border-primary/20">
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Amount Required:
+                
+                <div className="bg-background/80 backdrop-blur-sm rounded-lg border border-primary/30 p-5 shadow-lg">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <code className="text-base md:text-lg font-mono break-all leading-relaxed text-foreground font-bold block">
+                        {BITCOIN_ADDRESS}
+                      </code>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={copyToClipboard}
+                      className="flex-shrink-0 border-primary/40 hover:bg-primary/20 transition-all duration-300 h-12 px-4"
+                    >
+                      {copied ? (
+                        <CheckCircle2 className="h-5 w-5 text-primary" />
+                      ) : (
+                        <Copy className="h-5 w-5" />
+                      )}
+                    </Button>
                   </div>
-                  <div className="text-base font-bold text-primary">
-                    ${plan.amount} USD in BTC
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 pt-3">
+                  <div className="bg-background/50 rounded-lg p-4 border border-border">
+                    <div className="text-xs font-medium text-muted-foreground mb-1">Amount Required</div>
+                    <div className="text-lg font-bold text-primary">${plan.amount} USD</div>
                   </div>
+                  <div className="bg-background/50 rounded-lg p-4 border border-border">
+                    <div className="text-xs font-medium text-muted-foreground mb-1">Payment Method</div>
+                    <div className="text-lg font-bold text-foreground">Bitcoin (BTC)</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-center gap-2 pt-2 text-sm text-muted-foreground">
+                  <Check className="h-4 w-4 text-primary" />
+                  <span>Verified & Secure Address</span>
                 </div>
               </div>
             </div>
