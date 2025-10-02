@@ -18,3 +18,9 @@ enable_sms_confirmations = false
 
 [functions.coinmarketcap-api]
 verify_jwt = false
+
+[functions.verify-bitcoin-payment]
+verify_jwt = false
+
+[functions.check-expired-subscriptions]
+verify_jwt = false

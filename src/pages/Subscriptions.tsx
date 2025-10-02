@@ -81,14 +81,18 @@ export default function Subscriptions() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        <div className="text-center mb-16 space-y-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold text-primary">Premium Bitcoin Investment Plans</span>
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             Choose Your Investment Plan
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Select a plan that matches your investment goals and start growing your crypto portfolio
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Secure, transparent Bitcoin subscriptions with automated blockchain verification and recurring payment support
           </p>
         </div>
 
@@ -96,57 +100,87 @@ export default function Subscriptions() {
           {plans.map((plan) => (
             <Card 
               key={plan.id}
-              className={`relative ${plan.popular ? 'border-primary shadow-lg scale-105' : ''}`}
+              className={`relative overflow-hidden transition-all duration-300 hover:shadow-2xl ${
+                plan.popular 
+                  ? 'border-primary shadow-2xl scale-105 bg-gradient-to-br from-card to-primary/5' 
+                  : 'hover:border-primary/50'
+              }`}
             >
               {plan.popular && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary">
-                  Most Popular
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+              )}
+              
+              {plan.popular && (
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-accent shadow-lg border-none">
+                  ⭐ Most Popular
                 </Badge>
               )}
               
-              <CardHeader>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <CardDescription>{plan.duration}</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">${plan.amount}</span>
-                  <span className="text-muted-foreground">/month</span>
+              <CardHeader className="space-y-4 pb-6">
+                <CardTitle className="text-3xl font-bold">{plan.name}</CardTitle>
+                <CardDescription className="text-base">{plan.duration} subscription</CardDescription>
+                <div className="mt-6 flex items-baseline gap-2">
+                  <span className="text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    ${plan.amount}
+                  </span>
+                  <span className="text-lg text-muted-foreground">/month</span>
                 </div>
               </CardHeader>
 
               <CardContent className="space-y-6">
-                <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-                  <div className="flex items-center gap-2 text-primary mb-1">
-                    <TrendingUp className="h-5 w-5" />
-                    <span className="font-semibold">Projected Profit Gain</span>
-                  </div>
-                  <div className="text-3xl font-bold text-primary">
-                    ${plan.projectedProfit}
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    {plan.roi}% ROI
+                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 p-6 border border-primary/30 shadow-inner">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full -mr-12 -mt-12" />
+                  <div className="relative space-y-2">
+                    <div className="flex items-center gap-2 text-primary mb-2">
+                      <TrendingUp className="h-5 w-5" />
+                      <span className="font-semibold text-sm">Projected Monthly Profit</span>
+                    </div>
+                    <div className="text-4xl font-bold text-primary">
+                      ${plan.projectedProfit}
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Badge variant="outline" className="bg-primary/10 border-primary/30 text-primary font-semibold">
+                        {plan.roi}% ROI
+                      </Badge>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4 pt-2">
                   {plan.features.map((feature, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                      <span className="text-sm">{feature}</span>
+                      <div className="flex-shrink-0 mt-0.5">
+                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Check className="h-3 w-3 text-primary font-bold" />
+                        </div>
+                      </div>
+                      <span className="text-sm leading-relaxed">{feature}</span>
                     </div>
                   ))}
                 </div>
 
                 <Button 
-                  className="w-full"
+                  className={`w-full h-12 text-base font-semibold transition-all duration-300 ${
+                    plan.popular 
+                      ? 'bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg hover:shadow-xl' 
+                      : 'hover:bg-primary/10'
+                  }`}
                   size="lg"
                   onClick={() => handleSelectPlan(plan)}
                   variant={plan.popular ? "default" : "outline"}
                 >
-                  Select Plan
+                  Select {plan.name} Plan
                 </Button>
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-16 text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-card border border-border shadow-md">
+            <Check className="h-5 w-5 text-primary" />
+            <span className="text-sm font-medium">Secure Bitcoin payments • Automated blockchain verification • SSL/HTTPS encrypted</span>
+          </div>
         </div>
       </div>
 

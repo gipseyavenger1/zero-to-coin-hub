@@ -25,7 +25,7 @@ interface BitcoinPaymentModalProps {
   };
 }
 
-const BITCOIN_ADDRESS = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+const BITCOIN_ADDRESS = "1D5eHx9YTgqSNkdCWfqN3s7Ei7nQA8Wc39";
 
 export default function BitcoinPaymentModal({
   open,
@@ -104,73 +104,130 @@ export default function BitcoinPaymentModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Bitcoin className="h-6 w-6 text-primary" />
-            Bitcoin Payment
+      <DialogContent className="sm:max-w-[600px] border-primary/20 shadow-2xl">
+        <DialogHeader className="space-y-4 pb-6 border-b border-border">
+          <div className="flex items-center justify-center w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[hsl(var(--bitcoin-gold))] to-[hsl(35_91%_65%)] shadow-lg">
+            <Bitcoin className="h-8 w-8 text-white" />
+          </div>
+          <DialogTitle className="text-2xl font-bold text-center">
+            Secure Bitcoin Payment
           </DialogTitle>
-          <DialogDescription>
-            Complete your {plan.name} plan subscription (${plan.amount}/month)
+          <DialogDescription className="text-center text-base">
+            Complete your <span className="font-semibold text-primary">{plan.name}</span> subscription
+            <div className="mt-2 text-lg font-bold text-foreground">${plan.amount} USD/month</div>
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          <div className="space-y-3">
-            <Label>Step 1: Send Bitcoin to this address</Label>
-            <div className="bg-muted rounded-lg p-4 space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <code className="text-sm break-all">{BITCOIN_ADDRESS}</code>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={copyToClipboard}
-                  className="flex-shrink-0"
-                >
-                  {copied ? (
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
+        <div className="space-y-6 py-6">
+          {/* Step 1: Bitcoin Address */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 border border-primary/20">
+                <span className="text-sm font-bold text-primary">1</span>
               </div>
-              <div className="text-sm text-muted-foreground">
-                Amount: ${plan.amount} USD equivalent in BTC
+              <Label className="text-base font-semibold">Send Payment to Address</Label>
+            </div>
+            
+            <div className="relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-6 shadow-lg">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16" />
+              <div className="relative space-y-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <code className="text-sm font-mono break-all leading-relaxed text-foreground font-semibold">
+                      {BITCOIN_ADDRESS}
+                    </code>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={copyToClipboard}
+                    className="flex-shrink-0 border-primary/30 hover:bg-primary/10 transition-all duration-300"
+                  >
+                    {copied ? (
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2 pt-2 border-t border-primary/20">
+                  <div className="text-sm font-medium text-muted-foreground">
+                    Amount Required:
+                  </div>
+                  <div className="text-base font-bold text-primary">
+                    ${plan.amount} USD in BTC
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="txHash">Step 2: Enter Transaction Hash</Label>
+          {/* Step 2: Transaction Hash */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 border border-primary/20">
+                  <span className="text-sm font-bold text-primary">2</span>
+                </div>
+                <Label htmlFor="txHash" className="text-base font-semibold">
+                  Enter Transaction Hash
+                </Label>
+              </div>
+              
               <Input
                 id="txHash"
-                placeholder="Enter your Bitcoin transaction hash"
+                placeholder="Paste your Bitcoin transaction hash here"
                 value={txHash}
                 onChange={(e) => setTxHash(e.target.value)}
                 required
+                className="h-12 text-base border-primary/30 focus:border-primary focus:ring-primary"
               />
-              <p className="text-xs text-muted-foreground">
-                After sending Bitcoin, paste the transaction hash here for verification
+              <p className="text-sm text-muted-foreground flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                After sending Bitcoin, paste your transaction hash here for automatic verification
               </p>
             </div>
 
-            <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 space-y-2">
-              <h4 className="font-semibold text-sm">Important Notes:</h4>
-              <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
-                <li>Subscription activates after 1 blockchain confirmation</li>
-                <li>Typically takes 10-30 minutes for confirmation</li>
-                <li>You'll receive email notification once active</li>
-                <li>Keep your transaction hash for records</li>
+            {/* Premium Info Box */}
+            <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-card to-muted/50 p-6 shadow-md">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+              <h4 className="font-bold text-base mb-3 flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-primary" />
+                What Happens Next
+              </h4>
+              <ul className="space-y-2.5 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5 font-bold">→</span>
+                  <span>Your payment is automatically monitored on the blockchain</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5 font-bold">→</span>
+                  <span>Subscription activates after 1 confirmation (~10-30 minutes)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5 font-bold">→</span>
+                  <span>Instant email notification upon activation</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5 font-bold">→</span>
+                  <span>Secure, encrypted transaction with SSL/HTTPS protection</span>
+                </li>
               </ul>
             </div>
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-12 text-base font-semibold bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "Confirm Payment"}
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Verifying Payment...
+                </span>
+              ) : (
+                "Confirm & Activate Subscription"
+              )}
             </Button>
           </form>
         </div>
