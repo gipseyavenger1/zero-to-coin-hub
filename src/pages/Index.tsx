@@ -7,6 +7,8 @@ import ContactSection from '@/components/ContactSection';
 import InvestmentPlans from '@/components/InvestmentPlans';
 import ActiveSubscription from '@/components/ActiveSubscription';
 import BitcoinAddressBanner from '@/components/BitcoinAddressBanner';
+import FeaturedInLogoBar from '@/components/FeaturedInLogoBar';
+import PressMediaSection from '@/components/PressMediaSection';
 import { Bitcoin, TrendingUp, Wallet, Shield, Zap, ArrowRight } from 'lucide-react';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -184,6 +186,12 @@ const Index = () => {
 
       {/* Investment Plans Section */}
       <InvestmentPlans />
+
+      {/* Featured In Section */}
+      <FeaturedInLogoBar />
+
+      {/* Press & Media Section */}
+      <PressMediaSection limit={3} />
 
       {/* Contact & Credibility Section */}
       <ContactSection />
