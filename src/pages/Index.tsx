@@ -79,7 +79,7 @@ const Index = () => {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent">
-              CryptoInvest Pro
+              zero-to-coin-hub
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
@@ -113,7 +113,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Why Choose CryptoInvest Pro?
+            Why Choose zero-to-coin-hub?
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Built for serious investors who demand the best in security, performance, and features.
@@ -204,7 +204,7 @@ const Index = () => {
             Ready to Start Your Crypto Journey?
           </h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join thousands of investors who trust CryptoInvest Pro for their digital asset management.
+            Join thousands of investors who trust zero-to-coin-hub for their digital asset management.
           </p>
           <Button 
             size="lg" 

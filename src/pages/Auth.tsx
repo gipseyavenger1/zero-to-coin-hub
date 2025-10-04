@@ -301,7 +301,7 @@ const Auth = () => {
             </div>
           </div>
           <h1 className="text-3xl font-bold bg-gradient-text bg-clip-text text-transparent crypto-gradient">
-            CryptoInvest Pro
+            zero-to-coin-hub
           </h1>
           <p className="text-muted-foreground mt-2">
             Professional Cryptocurrency Investment Platform

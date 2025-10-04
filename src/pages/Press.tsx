@@ -10,12 +10,12 @@ const Press = () => {
 
   useEffect(() => {
     // Set page title and meta description for SEO
-    document.title = 'Press & Media Coverage | CryptoInvest Pro';
+    document.title = 'Press & Media Coverage | zero-to-coin-hub';
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute(
         'content',
-        'Discover what leading publications are saying about CryptoInvest Pro. Read press coverage from Forbes, TechCrunch, Bloomberg, and more.'
+        'Discover what leading publications are saying about zero-to-coin-hub. Read press coverage from Forbes, TechCrunch, Bloomberg, and more.'
       );
     }
   }, []);
@@ -46,7 +46,7 @@ const Press = () => {
             Press & Media
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Leading publications recognize CryptoInvest Pro as a trusted platform for 
+            Leading publications recognize zero-to-coin-hub as a trusted platform for 
             professional cryptocurrency investment and trading.
           </p>
         </div>

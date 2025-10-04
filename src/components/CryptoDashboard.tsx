@@ -142,7 +142,7 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
                 <Bitcoin className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold">CryptoInvest Pro</h1>
+                <h1 className="text-2xl font-bold">zero-to-coin-hub</h1>
                 <p className="text-sm text-muted-foreground">
                   Welcome back, {user.user_metadata?.full_name || user.email}
                 </p>

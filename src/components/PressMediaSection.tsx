@@ -20,7 +20,7 @@ const pressItems: PressItem[] = [
     id: '1',
     publication: 'Forbes',
     publicationLogo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Forbes_logo.svg/320px-Forbes_logo.svg.png',
-    quote: 'CryptoInvest Pro is revolutionizing the way institutional investors approach digital assets with their cutting-edge security protocols.',
+    quote: 'zero-to-coin-hub is revolutionizing the way institutional investors approach digital assets with their cutting-edge security protocols.',
     author: 'Sarah Johnson',
     date: '2024-09-15',
     articleUrl: '#',
@@ -40,7 +40,7 @@ const pressItems: PressItem[] = [
     id: '3',
     publication: 'Bloomberg',
     publicationLogo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Bloomberg_logo.svg/320px-Bloomberg_logo.svg.png',
-    quote: 'With institutional-grade infrastructure and a focus on regulatory compliance, CryptoInvest Pro is attracting major players in the financial sector.',
+    quote: 'With institutional-grade infrastructure and a focus on regulatory compliance, zero-to-coin-hub is attracting major players in the financial sector.',
     author: 'David Martinez',
     date: '2024-07-10',
     articleUrl: '#',
@@ -70,7 +70,7 @@ const PressMediaSection = ({ limit }: { limit?: number }) => {
       },
       "itemReviewed": {
         "@type": "WebApplication",
-        "name": "CryptoInvest Pro"
+        "name": "zero-to-coin-hub"
       }
     }))
   };
@@ -95,7 +95,7 @@ const PressMediaSection = ({ limit }: { limit?: number }) => {
               Press & Media Coverage
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              See what industry leaders are saying about CryptoInvest Pro
+              See what industry leaders are saying about zero-to-coin-hub
             </p>
           </motion.div>
 
