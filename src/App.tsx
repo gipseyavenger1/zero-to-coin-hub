@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import Subscriptions from "./pages/Subscriptions";
 import Press from "./pages/Press";
 import NotFound from "./pages/NotFound";
+import AdminDeposits from "./pages/AdminDeposits";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/press" element={<Press />} />
+          <Route path="/admin/deposits" element={<AdminDeposits />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
