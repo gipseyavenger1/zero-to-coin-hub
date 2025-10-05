@@ -134,7 +134,7 @@ const ContactSection = () => {
                   <Phone className="h-5 w-5 text-primary flex-shrink-0" />
                   <div>
                     <p className="font-medium">Phone Support</p>
-                    <p className="text-muted-foreground">+1 (716) 222-0627</p>
+                    <p className="text-muted-foreground">+1 (774) 202-9410</p>
                   </div>
                 </div>
 

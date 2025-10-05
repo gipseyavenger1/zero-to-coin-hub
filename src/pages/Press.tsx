@@ -71,7 +71,7 @@ const Press = () => {
                 <strong>Email:</strong> press@cryptoinvestpro.com
               </p>
               <p className="text-muted-foreground">
-                <strong>Phone:</strong> +1 (555) 123-4567
+                <strong>Phone:</strong> +1 (774) 202-9410
               </p>
             </div>
           </div>
