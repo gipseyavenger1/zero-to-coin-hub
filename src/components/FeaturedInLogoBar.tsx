@@ -1,5 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import forbesLogo from '@/assets/forbes-logo.png';
+import techcrunchLogo from '@/assets/techcrunch-logo.png';
+import bloombergLogo from '@/assets/bloomberg-logo.png';
+import wsjLogo from '@/assets/wsj-logo.png';
+import coindeskLogo from '@/assets/coindesk-logo.png';
+import reutersLogo from '@/assets/reuters-logo.png';
 
 interface Publication {
   name: string;
@@ -10,32 +16,32 @@ interface Publication {
 const publications: Publication[] = [
   {
     name: 'Forbes',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Forbes_logo.svg/320px-Forbes_logo.svg.png',
+    logo: forbesLogo,
     url: '#'
   },
   {
     name: 'TechCrunch',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/TechCrunch_logo.svg/320px-TechCrunch_logo.svg.png',
+    logo: techcrunchLogo,
     url: '#'
   },
   {
     name: 'Bloomberg',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Bloomberg_logo.svg/320px-Bloomberg_logo.svg.png',
+    logo: bloombergLogo,
     url: '#'
   },
   {
     name: 'The Wall Street Journal',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/The_Wall_Street_Journal_logo.svg/320px-The_Wall_Street_Journal_logo.svg.png',
+    logo: wsjLogo,
     url: '#'
   },
   {
     name: 'CoinDesk',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/CoinDesk_logo.svg/320px-CoinDesk_logo.svg.png',
+    logo: coindeskLogo,
     url: '#'
   },
   {
     name: 'Reuters',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Reuters_logo.svg/320px-Reuters_logo.svg.png',
+    logo: reutersLogo,
     url: '#'
   }
 ];

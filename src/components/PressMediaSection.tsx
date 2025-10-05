@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ExternalLink, Quote } from 'lucide-react';
+import forbesLogo from '@/assets/forbes-logo.png';
+import techcrunchLogo from '@/assets/techcrunch-logo.png';
+import bloombergLogo from '@/assets/bloomberg-logo.png';
 
 interface PressItem {
   id: string;
@@ -19,7 +22,7 @@ const pressItems: PressItem[] = [
   {
     id: '1',
     publication: 'Forbes',
-    publicationLogo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Forbes_logo.svg/320px-Forbes_logo.svg.png',
+    publicationLogo: forbesLogo,
     quote: 'zero-to-coin-hub is revolutionizing the way institutional investors approach digital assets with their cutting-edge security protocols.',
     author: 'Sarah Johnson',
     date: '2024-09-15',
@@ -29,7 +32,7 @@ const pressItems: PressItem[] = [
   {
     id: '2',
     publication: 'TechCrunch',
-    publicationLogo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/TechCrunch_logo.svg/320px-TechCrunch_logo.svg.png',
+    publicationLogo: techcrunchLogo,
     quote: 'The platform\'s innovative approach to cryptocurrency trading sets a new standard for security and user experience in the fintech industry.',
     author: 'Michael Chen',
     date: '2024-08-22',
@@ -39,7 +42,7 @@ const pressItems: PressItem[] = [
   {
     id: '3',
     publication: 'Bloomberg',
-    publicationLogo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Bloomberg_logo.svg/320px-Bloomberg_logo.svg.png',
+    publicationLogo: bloombergLogo,
     quote: 'With institutional-grade infrastructure and a focus on regulatory compliance, zero-to-coin-hub is attracting major players in the financial sector.',
     author: 'David Martinez',
     date: '2024-07-10',
