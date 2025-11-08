@@ -19,8 +19,8 @@ import type { User } from '@supabase/supabase-js';
 import SendCryptoModal from './SendCryptoModal';
 import CryptoChart from './CryptoChart';
 import RealTimePriceChart from './RealTimePriceChart';
-
 import RealTimePortfolioTracker from './RealTimePortfolioTracker';
+import { ThemeToggle } from './ThemeToggle';
 
 interface CryptoWallet {
   id: string;
@@ -149,6 +149,7 @@ const CryptoDashboard: React.FC<CryptoDashboardProps> = ({ user, onSignOut }) =>
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <ThemeToggle />
               <Button 
                 variant="outline"
                 onClick={() => setShowSendModal(true)}

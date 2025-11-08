@@ -10,6 +10,7 @@ import BitcoinAddressBanner from '@/components/BitcoinAddressBanner';
 import FeaturedInLogoBar from '@/components/FeaturedInLogoBar';
 import PressMediaSection from '@/components/PressMediaSection';
 import CandlestickChart from '@/components/CandlestickChart';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Bitcoin, TrendingUp, Wallet, Shield, Zap, ArrowRight } from 'lucide-react';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -69,6 +70,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header with theme toggle */}
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+      
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
