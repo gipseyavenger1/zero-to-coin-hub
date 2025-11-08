@@ -22,6 +22,13 @@ interface Plan {
 
 const plans: Plan[] = [
   {
+    amount: 0,
+    duration: '1 Month',
+    projectedProfit: 25,
+    profitPercentage: 5,
+    features: ['Basic portfolio tracking', 'Email support', 'Monthly reports'],
+  },
+  {
     amount: 500,
     duration: '1 Month',
     projectedProfit: 75,
@@ -57,13 +64,13 @@ const InvestmentPlans = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
         {plans.map((plan, index) => (
           <Card 
             key={plan.amount} 
-            className={`relative ${index === 1 ? 'border-primary shadow-lg scale-105' : ''}`}
+            className={`relative ${index === 2 ? 'border-primary shadow-lg scale-105' : ''}`}
           >
-            {index === 1 && (
+            {index === 2 && (
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
                 Most Popular
               </div>
@@ -95,7 +102,7 @@ const InvestmentPlans = () => {
               <Link to="/subscriptions" className="w-full">
                 <Button 
                   className="w-full" 
-                  variant={index === 1 ? 'default' : 'outline'}
+                  variant={index === 2 ? 'default' : 'outline'}
                 >
                   Select Plan
                 </Button>
@@ -131,6 +138,7 @@ const InvestmentPlans = () => {
             {plans.map((plan) => (
               <TableRow key={plan.amount}>
                 <TableCell className="font-semibold">
+                  {plan.amount === 0 && 'Beginner'}
                   {plan.amount === 500 && 'Starter'}
                   {plan.amount === 1000 && 'Professional'}
                   {plan.amount === 2000 && 'Premium'}
