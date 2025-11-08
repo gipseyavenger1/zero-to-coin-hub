@@ -9,6 +9,7 @@ import ActiveSubscription from '@/components/ActiveSubscription';
 import BitcoinAddressBanner from '@/components/BitcoinAddressBanner';
 import FeaturedInLogoBar from '@/components/FeaturedInLogoBar';
 import PressMediaSection from '@/components/PressMediaSection';
+import CandlestickChart from '@/components/CandlestickChart';
 import { Bitcoin, TrendingUp, Wallet, Shield, Zap, ArrowRight } from 'lucide-react';
 import type { User, Session } from '@supabase/supabase-js';
 
@@ -58,6 +59,7 @@ const Index = () => {
       <div>
         <CryptoDashboard user={user} onSignOut={handleSignOut} />
         <div className="container mx-auto px-4 py-8 space-y-8">
+          <CandlestickChart symbol="BTC" />
           <BitcoinAddressBanner />
           <ActiveSubscription />
         </div>
